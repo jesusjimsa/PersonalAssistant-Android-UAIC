@@ -1,3 +1,4 @@
 <resources>
 	<string name="app_name">PersonalAssistant</string>
+	<string name="speak_button">Speak</string>
 </resources>
