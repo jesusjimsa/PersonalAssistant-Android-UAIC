@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,20 +46,13 @@ public class MainActivity extends AppCompatActivity {
 			public void onClick(View v){
 				try {
 					startActivityForResult(recognizer_intent, REQ_CODE_SPEECH_INPUT);
-					onActivityResult(REQ_CODE_SPEECH_INPUT, Activity.RESULT_OK, recognizer_intent);
+					//onActivityResult(REQ_CODE_SPEECH_INPUT, Activity.RESULT_OK, recognizer_intent);
 				}
 				catch (ActivityNotFoundException a) {
 					Toast.makeText(getApplicationContext(), "Opps! Your device doesn’t support Speech to Text", Toast.LENGTH_SHORT).show();
 				}
 
-				text_user.add(text.get(0));
 
-				if(text_user.size() > 9){
-					text_user.remove(0);
-				}
-
-				// next thing you have to do is check if your adapter has changed
-				adapter.notifyDataSetChanged();
 			}
 		});
 	}
@@ -71,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
 			case REQ_CODE_SPEECH_INPUT: {
 				if (resultCode == RESULT_OK && null != data) {
 					text = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+					text_user.add(text.get(0));
+
+					if(text_user.size() > 9){
+						text_user.remove(0);
+					}
+
+					// next thing you have to do is check if your adapter has changed
+					adapter.notifyDataSetChanged();
 				}
 
 				break;
