@@ -5,4 +5,4 @@ Create a personal assistant app, with voice commands. The app should recognize a
 (ex: “Hello Jimmy”) and predefined commands (“Call, check mail, etc.). Also the user can sets some
 custom commands, related with some actions on phone.  
 
-[Accepted commands](Accepted commands.md)
+[Accepted commands](Accepted%20commands.md)
