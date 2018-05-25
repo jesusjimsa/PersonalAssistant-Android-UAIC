@@ -12,6 +12,7 @@ For testing reasons, all instructions are in Spanish.
 * Saludos .*
 
 ## Apps
+* Abre ([aplicación permitida](#allowed-apps))
 
 ## Phone
 * Quiero hacer una llamada
@@ -25,6 +26,9 @@ For testing reasons, all instructions are in Spanish.
 	* El 3 de junio
 	* El título es...
 
-# Date and time
+## Date and time
 * ¿Qué hora es?
 * ¿Qué día es hoy?
+
+# Allowed apps
+* Facebook
