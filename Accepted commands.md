@@ -30,5 +30,15 @@ For testing reasons, all instructions are in Spanish.
 * ¿Qué hora es?
 * ¿Qué día es hoy?
 
+## E-mail
+* Escribir correo
+* Nuevo correo
+	* (destinatario)
+	* El asunto es (asunto)
+	* (contenido)
+
 # Allowed apps
 * Facebook
+* Twitter
+* WhatsApp
+* Telegram

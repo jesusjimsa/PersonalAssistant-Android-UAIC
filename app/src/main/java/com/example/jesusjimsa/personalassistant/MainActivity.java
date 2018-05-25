@@ -37,9 +37,12 @@ public class MainActivity extends AppCompatActivity {
 	public ArrayList<String> text = new ArrayList<>();
 	public Intent launchIntent = new Intent();
 
-	public Boolean asking_phone_number = false;
-	public Boolean creating_event_date = false;
-	public Boolean creating_event_title = false;
+	public boolean asking_phone_number = false;
+	public boolean creating_event_date = false;
+	public boolean creating_event_title = false;
+	public boolean email_to_who = false;
+	public boolean email_about_what = false;
+	public boolean email_saying_what = false;
 
 	public int num_date;
 	public int month_date;
@@ -69,7 +72,11 @@ public class MainActivity extends AppCompatActivity {
 	public String event_title = "el título es (.*)";    // The title of an event can be anything
 	public String what_time = "qué hora es";
 	public String what_day = "qué día es( hoy)?";
-
+	public String open_app = "abre ([a-zA-Z]+)";
+	public String new_email = "nuevo correo|escribir correo|nuevo email|escribir email";
+	public String email_to = "(.*) arroba (.*)(\\.com|\\.es|\\.ro)";
+	public String email_subject = "el asunto es (.*)";
+	public String email_content = "el contenido es (.*)";
 
 	// Patterns and matchers
 	//// Phone calls
@@ -80,6 +87,16 @@ public class MainActivity extends AppCompatActivity {
 	public Matcher event_date_matcher;
 	public Pattern event_title_pattern = Pattern.compile(event_title);
 	public Matcher event_title_matcher;
+	//// Apps
+	public Pattern open_app_pattern = Pattern.compile(open_app);
+	public Matcher open_app_matcher;
+	//// E-mail
+	public Pattern email_to_pattern = Pattern.compile(email_to);
+	public Matcher email_to_matcher;
+	public Pattern email_subject_pattern = Pattern.compile(email_subject);
+	public Matcher email_subject_matcher;
+	public Pattern email_content_pattern = Pattern.compile(email_content);
+	public Matcher email_content_matcher;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +200,42 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		return result;
+	}
+
+	protected String openApp(String app_name){
+		String response;
+
+		switch(app_name){
+			case "Facebook":
+				response = "Abriendo Facebook...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.katana");
+				startActivity(launchIntent);
+				break;
+			case "Twitter":
+				response = "Abriendo Twitter...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.twitter.android");
+				startActivity(launchIntent);
+				break;
+			case "WhatsApp":
+				response = "Abriendo WhatsApp...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.whatsapp");
+				startActivity(launchIntent);
+				break;
+			case "telegram":
+				response = "Abriendo Telegram...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("org.telegram.messenger");
+				startActivity(launchIntent);
+				break;
+			default:
+				response = "No puedo abrir esa aplicación todavía";
+				break;
+		}
+
+		return response;
 	}
 
 	@Override
@@ -308,6 +361,29 @@ public class MainActivity extends AppCompatActivity {
 
 			text_assistant.add(splitDateTime(reportDate, true));
 		}
+
+		/*
+		* Open apps
+		*
+		*
+		* */
+		open_app_matcher = open_app_pattern.matcher(text.get(0));
+
+		if(open_app_matcher.find()){
+			text_assistant.add(openApp(open_app_matcher.group(1)));
+		}
+
+		/*
+		* E-mail
+		*
+		*
+		* */
+		if(text.get(0).matches(new_email)){
+			text_assistant.add("¿A quién se lo quieres enviar?");
+			email_to_who = true;
+		}
+
+
 
 		/*
 		* Default answer
