@@ -22,4 +22,9 @@ For testing reasons, all instructions are in Spanish.
 * Añade un evento
 * Crea un evento
 * Nuevo evento
+	* El 3 de junio
 	* El título es...
+
+# Date and time
+* ¿Qué hora es?
+* ¿Qué día es hoy?

@@ -1,6 +1,7 @@
 package com.example.jesusjimsa.personalassistant;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -18,8 +19,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
 	public int num_date;
 	public int month_date;
 
+	@SuppressLint("SimpleDateFormat")
+	DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	Date currentTime;
+	String reportDate;
+
 	/*
 	 * Each time a regex is not matched elses increases by 1.
 	 * When the method gets to the end, checks the value of elses with the number of
@@ -58,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 	public String months = "(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)";
 	public String event_date = "(el )?([1-9]|1[0-9]|2[0-9]|30|31) de " + months;
 	public String event_title = "el título es (.*)";    // The title of an event can be anything
+	public String what_time = "qué hora es";
+	public String what_day = "qué día es( hoy)?";
 
 
 	// Patterns and matchers
@@ -102,37 +113,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	protected void createEvent(String title, int month, int day) {
-//		long calID = 1;
-//		long startMillis = 0;
-//		long endMillis = 0;
-//		Calendar beginTime = Calendar.getInstance();
-//		beginTime.set(2018, month, day, 12, 00);
-//		startMillis = beginTime.getTimeInMillis();
-//		Calendar endTime = Calendar.getInstance();
-//		endTime.set(2018, month, day, 12, 30);
-//		endMillis = endTime.getTimeInMillis();
-//
-//		ContentResolver cr = getContentResolver();
-//		ContentValues values = new ContentValues();
-//		values.put(CalendarContract.Events.DTSTART, startMillis);
-//		values.put(CalendarContract.Events.DTEND, endMillis);
-//		values.put(CalendarContract.Events.TITLE, title);
-//		values.put(CalendarContract.Events.DESCRIPTION, "Added with PersonalAssistant");
-//		values.put(CalendarContract.Events.CALENDAR_ID, calID);
-//		values.put(CalendarContract.Events.EVENT_TIMEZONE, "America/Los_Angeles");
-//
-//		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-//			// TODO: Consider calling
-//			//    ActivityCompat#requestPermissions
-//			// here to request the missing permissions, and then overriding
-//			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//			//                                          int[] grantResults)
-//			// to handle the case where the user grants the permission. See the documentation
-//			// for ActivityCompat#requestPermissions for more details
-//		}
-//
-//		Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-
 		Intent calIntent = new Intent(Intent.ACTION_INSERT);
 		calIntent.setType("vnd.android.cursor.item/event");
 		calIntent.putExtra(CalendarContract.Events.TITLE, title);
@@ -189,6 +169,20 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		return value;
+	}
+
+	protected String splitDateTime(String date_time, boolean return_date){
+		String[] splitted = date_time.split(" ");
+		String result = "";
+
+		if(return_date){
+			result = splitted[0];
+		}
+		else{
+			result = splitted[1];
+		}
+
+		return result;
 	}
 
 	@Override
@@ -295,7 +289,30 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		/*
+		* Time and date
+		*
+		*
+		* */
+		// Time
+		if(text.get(0).matches(what_time)){
+			currentTime = Calendar.getInstance().getTime();
+			reportDate = df.format(currentTime);
+
+			text_assistant.add(splitDateTime(reportDate, false));
+		}
+
+		// Date
+		if(text.get(0).matches(what_day)){
+			currentTime = Calendar.getInstance().getTime();
+			reportDate = df.format(currentTime);
+
+			text_assistant.add(splitDateTime(reportDate, true));
+		}
+
+		/*
 		* Default answer
+		*
+		*
 		* */
 		if(elses == 555555550){
 			text_assistant.add(DEFAULT_MESSAGE);
