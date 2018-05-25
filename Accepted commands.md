@@ -6,6 +6,7 @@ For testing reasons, all instructions are in Spanish.
 2. [Apps](#apps)
 3. [Phone](#phone)
 4. [Calendar](#calendar)
+5. [Email](#e-mail)
 
 ## Chat
 * Hola .*
