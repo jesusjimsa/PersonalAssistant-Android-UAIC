@@ -22,3 +22,4 @@ For testing reasons, all instructions are in Spanish.
 * Añade un evento
 * Crea un evento
 * Nuevo evento
+	* El título es...

@@ -1,9 +1,15 @@
 package com.example.jesusjimsa.personalassistant;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.provider.CalendarContract;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +19,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
 	public int month_date;
 
 	/*
-	* Each time a regex is not matched elses increases by 1.
-	* When the method gets to the end, checks the value of elses with the number of
-	* if expressions that have been ignored, if it's the maximum number, the default
-	* message is sent to the user.
-	* */
+	 * Each time a regex is not matched elses increases by 1.
+	 * When the method gets to the end, checks the value of elses with the number of
+	 * if expressions that have been ignored, if it's the maximum number, the default
+	 * message is sent to the user.
+	 * */
 	public int elses = 0;
 	public static final String DEFAULT_MESSAGE = "Lo siento, no te he entendido";
 
@@ -49,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 	public String event = "añade un evento|crea un evento|nuevo evento";
 	public String months = "(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)";
 	public String event_date = "(el )?([1-9]|1[0-9]|2[0-9]|30|31) de " + months;
-	public String event_title = ".*";	// The title of an event can be anything
+	public String event_title = "el título es (.*)";    // The title of an event can be anything
 
 
 	// Patterns and matchers
@@ -57,9 +65,13 @@ public class MainActivity extends AppCompatActivity {
 	public Pattern num_call_pattern = Pattern.compile(number_call);
 	public Matcher num_call_matcher;
 	//// Calendar
+	public Pattern event_date_pattern = Pattern.compile(event_date);
+	public Matcher event_date_matcher;
+	public Pattern event_title_pattern = Pattern.compile(event_title);
+	public Matcher event_title_matcher;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState){
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -79,15 +91,104 @@ public class MainActivity extends AppCompatActivity {
 		recognizer_intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
 
 		speak.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v){
+			public void onClick(View v) {
 				try {
 					startActivityForResult(recognizer_intent, REQ_CODE_SPEECH_INPUT);
-				}
-				catch (ActivityNotFoundException a) {
+				} catch (ActivityNotFoundException a) {
 					Toast.makeText(getApplicationContext(), "Opps! Your device doesn’t support Speech to Text", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
+	}
+
+	protected void createEvent(String title, int month, int day) {
+//		long calID = 1;
+//		long startMillis = 0;
+//		long endMillis = 0;
+//		Calendar beginTime = Calendar.getInstance();
+//		beginTime.set(2018, month, day, 12, 00);
+//		startMillis = beginTime.getTimeInMillis();
+//		Calendar endTime = Calendar.getInstance();
+//		endTime.set(2018, month, day, 12, 30);
+//		endMillis = endTime.getTimeInMillis();
+//
+//		ContentResolver cr = getContentResolver();
+//		ContentValues values = new ContentValues();
+//		values.put(CalendarContract.Events.DTSTART, startMillis);
+//		values.put(CalendarContract.Events.DTEND, endMillis);
+//		values.put(CalendarContract.Events.TITLE, title);
+//		values.put(CalendarContract.Events.DESCRIPTION, "Added with PersonalAssistant");
+//		values.put(CalendarContract.Events.CALENDAR_ID, calID);
+//		values.put(CalendarContract.Events.EVENT_TIMEZONE, "America/Los_Angeles");
+//
+//		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+//			// TODO: Consider calling
+//			//    ActivityCompat#requestPermissions
+//			// here to request the missing permissions, and then overriding
+//			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//			//                                          int[] grantResults)
+//			// to handle the case where the user grants the permission. See the documentation
+//			// for ActivityCompat#requestPermissions for more details
+//		}
+//
+//		Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+		Intent calIntent = new Intent(Intent.ACTION_INSERT);
+		calIntent.setType("vnd.android.cursor.item/event");
+		calIntent.putExtra(CalendarContract.Events.TITLE, title);
+		calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "Event created using PersonalAssistant");
+
+		GregorianCalendar calDate = new GregorianCalendar(2018, month, day);
+		calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+		calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, calDate.getTimeInMillis());
+		calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, calDate.getTimeInMillis());
+
+		startActivity(calIntent);
+	}
+
+	protected int monthToNumber(String month){
+		int value = 0;
+
+		switch(month){
+			case "enero":
+				value = 1;
+				break;
+			case "febrero":
+				value = 2;
+				break;
+			case "marzo":
+				value = 3;
+				break;
+			case "abril":
+				value = 4;
+				break;
+			case "mayo":
+				value = 5;
+				break;
+			case "junio":
+				value = 6;
+				break;
+			case "julio":
+				value = 7;
+				break;
+			case "agosto":
+				value = 8;
+				break;
+			case "septiembre":
+				value = 9;
+				break;
+			case "octubre":
+				value = 10;
+				break;
+			case "noviembre":
+				value = 11;
+				break;
+			case "diciembre":
+				value = 12;
+				break;
+		}
+
+		return value;
 	}
 
 	@Override
@@ -113,9 +214,11 @@ public class MainActivity extends AppCompatActivity {
 
 		/*
 		* Saying hello
+		*
+		*
 		* */
 		if(text.get(0).matches(hello)){
-			text_assistant.add("Hola" + hello);
+			text_assistant.add("Hola");
 		}
 		else{
 			elses++;
@@ -123,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
 
 		/*
 		* Phone calls
+		*
+		*
 		* */
 		if(text.get(0).matches(phone_call)){
 			text_assistant.add("Dime el número al que quieres llamar");
@@ -156,6 +261,8 @@ public class MainActivity extends AppCompatActivity {
 
 		/*
 		* Events
+		*
+		*
 		* */
 		if(text.get(0).matches(event)){
 			text_assistant.add("¿Qué día quieres hacerlo?");
@@ -165,14 +272,25 @@ public class MainActivity extends AppCompatActivity {
 			elses++;
 		}
 
-		if(text.get(0).matches(event_date) && creating_event_date) {
-			text_assistant.add(text.get(0));
+		event_date_matcher = event_date_pattern.matcher(text.get(0));
+
+		if(event_date_matcher.find() && creating_event_date) {
+			text_assistant.add("De acuerdo, el" + event_date_matcher.group(2) + " de " + event_date_matcher.group(3) + ", ¿qué título le pongo?");
+
+			num_date = Integer.parseInt(event_date_matcher.group(2));
+			month_date = monthToNumber(event_date_matcher.group(3));
+
 			creating_event_date = false;
 			creating_event_title = true;
 		}
 
-		if(text.get(0).matches(event_title) && creating_event_title){
-			text_assistant.add("El evento " + text.get(0) + "se ha añadido al calendario");
+		event_title_matcher = event_title_pattern.matcher(text.get(0));
+
+		if(event_title_matcher.find() && creating_event_title){
+			text_assistant.add("El evento " + event_title_matcher.group(1) + " se ha añadido al calendario");
+
+			createEvent(event_title_matcher.group(1), month_date, num_date);
+
 			creating_event_title = false;
 		}
 
