@@ -234,6 +234,125 @@ public class MainActivity extends AppCompatActivity {
 				launchIntent = getPackageManager().getLaunchIntentForPackage("org.telegram.messenger");
 				startActivity(launchIntent);
 				break;
+			case "Wunderlist":
+				response = "Abriendo Wunderlist...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.wunderkinder.wunderlistandroid");
+				startActivity(launchIntent);
+				break;
+			case "Outlook":
+				response = "Abriendo Outlook...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.microsoft.office.outlook");
+				startActivity(launchIntent);
+			case "Google fotos":
+				response = "Abriendo Google Fotos...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.photos");
+				startActivity(launchIntent);
+				break;
+			case "Flipboard":
+				response = "Abriendo Flipboard...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("flipboard.app");
+				startActivity(launchIntent);
+				break;
+			case "Chrome":
+				response = "Abriendo Google Chrome...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+				startActivity(launchIntent);
+				break;
+			case "Instagram":
+				response = "Abriendo Instagram...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.instagram.android");
+				startActivity(launchIntent);
+				break;
+			case "Messenger":
+				response = "Abriendo Facebook Messenger...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
+				startActivity(launchIntent);
+				break;
+			case "Shazam":
+				response = "Abriendo Shazam...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.shazam.android");
+				startActivity(launchIntent);
+				break;
+			case "Spotify":
+				response = "Abriendo Spotify...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+				startActivity(launchIntent);
+				break;
+			case "Gmail":
+				response = "Abriendo Gmail...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.gm");
+				startActivity(launchIntent);
+				break;
+			case "calendar":
+				response = "Abriendo Google Calendar...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
+				startActivity(launchIntent);
+				break;
+			case "drive":
+				response = "Abriendo Google Drive...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.docs");
+				startActivity(launchIntent);
+				break;
+			case "Maps":
+				response = "Abriendo Google Maps...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.maps");
+				startActivity(launchIntent);
+				break;
+			case "traductor":
+				response = "Abriendo Google Translate...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.translate");
+				startActivity(launchIntent);
+				break;
+			case "YouTube":
+				response = "Abriendo YouTube...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
+				startActivity(launchIntent);
+				break;
+			case "OneNote":
+				response = "Abriendo OneNote...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.microsoft.office.onenote");
+				startActivity(launchIntent);
+				break;
+			case "PayPal":
+				response = "Abriendo PayPal...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.paypal.android.p2pmobile");
+				startActivity(launchIntent);
+				break;
+			case "LastPass":
+				response = "Abriendo LastPass...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.lastpass.lpandroid");
+				startActivity(launchIntent);
+				break;
+			case "Netflix":
+				response = "Abriendo Netflix...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.netflix.mediaclient");
+				startActivity(launchIntent);
+				break;
+			case "Dropbox":
+				response = "Abriendo Drobpox...";
+
+				launchIntent = getPackageManager().getLaunchIntentForPackage("com.dropbox.android");
+				startActivity(launchIntent);
+				break;
 			default:
 				response = "No puedo abrir esa aplicación todavía";
 				break;

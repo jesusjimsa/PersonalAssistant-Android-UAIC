@@ -60,3 +60,23 @@ For testing reasons, all instructions are in Spanish.
 * Twitter
 * WhatsApp
 * Telegram
+* Wunderlist
+* Outlook
+* Google Fotos
+* Flipboard
+* Chrome
+* Instagram
+* Messenger
+* Shazam
+* Spotify
+* Gmail
+* Calendar
+* Drive
+* Maps
+* Traductor
+* YouTube
+* OneNote
+* PayPal
+* LastPass
+* Netflix
+* Dropbox
