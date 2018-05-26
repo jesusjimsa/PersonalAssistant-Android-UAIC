@@ -472,4 +472,34 @@ public class MainActivity extends AppCompatActivity {
 
 		adapter_assistant.notifyDataSetChanged();
 	}
+
+	@Override
+	public void onStart(){
+		// call the superclass method first
+		super.onStart();
+	}
+
+	@Override
+	public void onResume() {
+		// Always call the superclass method first
+		super.onResume();
+	}
+
+	@Override
+	public void onPause() {
+		// Always call the superclass method first
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		// Always call the superclass method first
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroy(){
+		// Always call the superclass method first
+		super.onDestroy();
+	}
 }
