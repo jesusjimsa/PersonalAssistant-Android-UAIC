@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 	public String email_to = "(.*) arroba (.*)(\\.com|\\.es|\\.ro)";
 	public String email_subject_re = "el asunto es (.*)";
 	public String email_content_re = "el contenido es (.*)";
+	public String weather = "qué tiempo hace(.*)|hace sol(.*)|está lloviendo(.*)|está nevando(.*)|necesito el paraguas(.*)";
 
 	// Patterns and matchers
 	//// Phone calls
@@ -454,6 +455,18 @@ public class MainActivity extends AppCompatActivity {
 			email_saying_what = false;
 
 			sendEmail(email_address, email_subject, email_content);
+		}
+
+		/*
+		* Weather
+		*
+		*
+		* */
+		if(text.get(0).matches(weather)){
+			launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?&q=what%27s%20the%20weather%20like"));
+			startActivity(launchIntent);
+
+			text_assistant.add("Google lo sabrá mejor que yo");
 		}
 
 		/*

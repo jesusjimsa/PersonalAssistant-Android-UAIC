@@ -41,6 +41,13 @@ For testing reasons, all instructions are in Spanish.
 	* El asunto es (asunto)
 	* El contenido es (contenido)
 
+## Weather
+* ¿Qué tiempo hace?
+* ¿Hace sol?
+* ¿Está lloviendo?
+* ¿Está nevando?
+* ¿Necesito el paraguas?
+
 # Allowed apps
 * Facebook
 * Twitter
