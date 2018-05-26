@@ -8,6 +8,7 @@ For testing reasons, all instructions are in Spanish.
 4. [Calendar](#calendar)
 5. [Date and time](#date-and-time)
 6. [Email](#e-mail)
+7. [Weather](#weather)
 
 ## Chat
 * Hola .*

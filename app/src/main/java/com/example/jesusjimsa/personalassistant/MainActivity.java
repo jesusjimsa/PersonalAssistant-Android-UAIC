@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 	public String event_title = "el título es (.*)";    // The title of an event can be anything
 	public String what_time = "qué hora es";
 	public String what_day = "qué día es( hoy)?";
+	public String open_web = "abre (.*)(\\.com|\\.es|\\.ro|\\.org)";
 	public String open_app = "abre ([a-zA-Z]+)";
 	public String new_email = "nuevo correo|escribir correo|nuevo email|escribir email";
 	public String email_to = "(.*) arroba (.*)(\\.com|\\.es|\\.ro)";
@@ -98,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
 	public Matcher email_subject_matcher;
 	public Pattern email_content_pattern = Pattern.compile(email_content_re);
 	public Matcher email_content_matcher;
+	//// Webs
+	public Pattern open_web_pattern = Pattern.compile(open_web);
+	public Matcher open_web_matcher;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -273,6 +277,8 @@ public class MainActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
+		String text_for_assistant = DEFAULT_MESSAGE;
+
 		switch (requestCode) {
 			case REQ_CODE_SPEECH_INPUT: {
 				if (resultCode == RESULT_OK && null != data) {
@@ -296,10 +302,7 @@ public class MainActivity extends AppCompatActivity {
 		*
 		* */
 		if(text.get(0).matches(hello)){
-			text_assistant.add("Hola");
-		}
-		else{
-			elses++;
+			text_for_assistant = "Hola";
 		}
 
 		/*
@@ -308,15 +311,12 @@ public class MainActivity extends AppCompatActivity {
 		*
 		* */
 		if(text.get(0).matches(phone_call)){
-			text_assistant.add("Dime el número al que quieres llamar");
+			text_for_assistant = "Dime el número al que quieres llamar";
 			asking_phone_number = true;
-		}
-		else{
-			elses++;
 		}
 
 		if(text.get(0).matches(phone_number) && asking_phone_number){
-			text_assistant.add("Llamando a " + text.get(0));
+			text_for_assistant = "Llamando a " + text.get(0);
 			asking_phone_number = false;
 
 			phoneCall(text.get(0));
@@ -325,12 +325,9 @@ public class MainActivity extends AppCompatActivity {
 		num_call_matcher = num_call_pattern.matcher(text.get(0));
 
 		if(num_call_matcher.find()){
-			text_assistant.add("Llamando a " + num_call_matcher.group(2));
+			text_for_assistant = "Llamando a " + num_call_matcher.group(2);
 
 			phoneCall(num_call_matcher.group(2));
-		}
-		else{
-			elses++;
 		}
 
 		/*
@@ -339,17 +336,14 @@ public class MainActivity extends AppCompatActivity {
 		*
 		* */
 		if(text.get(0).matches(event)){
-			text_assistant.add("¿Qué día quieres hacerlo?");
+			text_for_assistant = "¿Qué día quieres hacerlo?";
 			creating_event_date = true;
-		}
-		else{
-			elses++;
 		}
 
 		event_date_matcher = event_date_pattern.matcher(text.get(0));
 
 		if(event_date_matcher.find() && creating_event_date) {
-			text_assistant.add("De acuerdo, el" + event_date_matcher.group(2) + " de " + event_date_matcher.group(3) + ", ¿qué título le pongo?");
+			text_for_assistant = "De acuerdo, el" + event_date_matcher.group(2) + " de " + event_date_matcher.group(3) + ", ¿qué título le pongo?";
 
 			num_date = Integer.parseInt(event_date_matcher.group(2));
 			month_date = monthToNumber(event_date_matcher.group(3));
@@ -361,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
 		event_title_matcher = event_title_pattern.matcher(text.get(0));
 
 		if(event_title_matcher.find() && creating_event_title){
-			text_assistant.add("El evento " + event_title_matcher.group(1) + " se ha añadido al calendario");
+			text_for_assistant = "El evento " + event_title_matcher.group(1) + " se ha añadido al calendario";
 
 			createEvent(event_title_matcher.group(1), month_date, num_date);
 
@@ -378,10 +372,7 @@ public class MainActivity extends AppCompatActivity {
 			currentTime = Calendar.getInstance().getTime();
 			reportDate = df.format(currentTime);
 
-			text_assistant.add(splitDateTime(reportDate, false));
-		}
-		else{
-			elses++;
+			text_for_assistant = splitDateTime(reportDate, false);
 		}
 
 		// Date
@@ -389,10 +380,7 @@ public class MainActivity extends AppCompatActivity {
 			currentTime = Calendar.getInstance().getTime();
 			reportDate = df.format(currentTime);
 
-			text_assistant.add(splitDateTime(reportDate, true));
-		}
-		else{
-			elses++;
+			text_for_assistant = splitDateTime(reportDate, true);
 		}
 
 		/*
@@ -403,10 +391,7 @@ public class MainActivity extends AppCompatActivity {
 		open_app_matcher = open_app_pattern.matcher(text.get(0));
 
 		if(open_app_matcher.find()){
-			text_assistant.add(openApp(open_app_matcher.group(1)));
-		}
-		else{
-			elses++;
+			text_for_assistant = openApp(open_app_matcher.group(1));
 		}
 
 		/*
@@ -415,11 +400,9 @@ public class MainActivity extends AppCompatActivity {
 		*
 		* */
 		if(text.get(0).matches(new_email)){
-			text_assistant.add("¿A quién se lo quieres enviar?");
+			text_for_assistant = "¿A quién se lo quieres enviar?";
+
 			email_to_who = true;
-		}
-		else{
-			elses++;
 		}
 
 		email_to_matcher = email_to_pattern.matcher(text.get(0));
@@ -428,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
 			// email = user + @ + provider + domain
 			email_address = email_to_matcher.group(1).toLowerCase() + "@" + email_to_matcher.group(2).toLowerCase() + email_to_matcher.group(3).toLowerCase();
 
-			text_assistant.add("¿Cuál es el asunto?");
+			text_for_assistant = "¿Cuál es el asunto?";
 
 			email_to_who = false;
 			email_about_what = true;
@@ -439,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 		if(email_subject_matcher.find() && email_about_what){
 			email_subject = email_subject_matcher.group(1);
 
-			text_assistant.add("¿Qué quieres decir en el correo?");
+			text_for_assistant = "¿Qué quieres decir en el correo?";
 
 			email_about_what = false;
 			email_saying_what = true;
@@ -450,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
 		if(email_content_matcher.find() && email_saying_what){
 			email_content = email_content_matcher.group(1);
 
-			text_assistant.add("Correo para " + email_to + "enviado");
+			text_for_assistant = "Correo para " + email_to + "enviado";
 
 			email_saying_what = false;
 
@@ -466,21 +449,18 @@ public class MainActivity extends AppCompatActivity {
 			launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?&q=what%27s%20the%20weather%20like"));
 			startActivity(launchIntent);
 
-			text_assistant.add("Google lo sabrá mejor que yo");
+			text_for_assistant = "Google lo sabrá mejor que yo";
 		}
 
 		/*
-		* Default answer
+		* Open web
 		*
 		*
 		* */
-		if(elses == 555555550){
-			text_assistant.add(DEFAULT_MESSAGE);
-		}
-		else{
-			elses = 0;
-		}
+		open_web_matcher = open_web_pattern.matcher(text.get(0));
 
+
+		text_assistant.add(text_for_assistant);
 		text_user.add("");
 
 		if(text_user.size() > 9){
