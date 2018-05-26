@@ -35,9 +35,11 @@ For testing reasons, all instructions are in Spanish.
 ## E-mail
 * Escribir correo
 * Nuevo correo
+* Escribir email
+* Nuevo email
 	* (destinatario)
 	* El asunto es (asunto)
-	* (contenido)
+	* El contenido es (contenido)
 
 # Allowed apps
 * Facebook

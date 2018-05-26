@@ -1,18 +1,14 @@
 package com.example.jesusjimsa.personalassistant;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.speech.RecognizerIntent;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
 
 	public int num_date;
 	public int month_date;
+	public String email_address;
+	public String email_subject;
+	public String email_content;
+
 
 	@SuppressLint("SimpleDateFormat")
 	DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
 	public String open_app = "abre ([a-zA-Z]+)";
 	public String new_email = "nuevo correo|escribir correo|nuevo email|escribir email";
 	public String email_to = "(.*) arroba (.*)(\\.com|\\.es|\\.ro)";
-	public String email_subject = "el asunto es (.*)";
-	public String email_content = "el contenido es (.*)";
+	public String email_subject_re = "el asunto es (.*)";
+	public String email_content_re = "el contenido es (.*)";
 
 	// Patterns and matchers
 	//// Phone calls
@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
 	//// E-mail
 	public Pattern email_to_pattern = Pattern.compile(email_to);
 	public Matcher email_to_matcher;
-	public Pattern email_subject_pattern = Pattern.compile(email_subject);
+	public Pattern email_subject_pattern = Pattern.compile(email_subject_re);
 	public Matcher email_subject_matcher;
-	public Pattern email_content_pattern = Pattern.compile(email_content);
+	public Pattern email_content_pattern = Pattern.compile(email_content_re);
 	public Matcher email_content_matcher;
 
 	@Override
@@ -127,6 +127,12 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
+	}
+
+	protected void phoneCall(String number){
+		launchIntent = new Intent(Intent.ACTION_CALL);
+		launchIntent.setData(Uri.parse("tel:" + number));
+		startActivity(launchIntent);
 	}
 
 	protected void createEvent(String title, int month, int day) {
@@ -238,6 +244,30 @@ public class MainActivity extends AppCompatActivity {
 		return response;
 	}
 
+	protected void sendEmail(String address, String subject, String content){
+		Log.i("Send email", "");
+
+		String[] TO = {address};
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setData(Uri.parse("mailto:"));
+		emailIntent.setType("text/plain");
+
+
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		emailIntent.putExtra(Intent.EXTRA_TEXT, content);
+
+		try {
+			startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+			finish();
+			Log.i("Finished sending email", "");
+		}
+		catch (android.content.ActivityNotFoundException ex) {
+			Toast.makeText(MainActivity.this,
+					"There is no email client installed.", Toast.LENGTH_SHORT).show();
+		}
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -288,9 +318,7 @@ public class MainActivity extends AppCompatActivity {
 			text_assistant.add("Llamando a " + text.get(0));
 			asking_phone_number = false;
 
-			launchIntent = new Intent(Intent.ACTION_CALL);
-			launchIntent.setData(Uri.parse("tel:" + text.get(0)));
-			startActivity(launchIntent);
+			phoneCall(text.get(0));
 		}
 
 		num_call_matcher = num_call_pattern.matcher(text.get(0));
@@ -298,9 +326,7 @@ public class MainActivity extends AppCompatActivity {
 		if(num_call_matcher.find()){
 			text_assistant.add("Llamando a " + num_call_matcher.group(2));
 
-			launchIntent = new Intent(Intent.ACTION_CALL);
-			launchIntent.setData(Uri.parse("tel:" + num_call_matcher.group(2)));
-			startActivity(launchIntent);
+			phoneCall(num_call_matcher.group(2));
 		}
 		else{
 			elses++;
@@ -353,6 +379,9 @@ public class MainActivity extends AppCompatActivity {
 
 			text_assistant.add(splitDateTime(reportDate, false));
 		}
+		else{
+			elses++;
+		}
 
 		// Date
 		if(text.get(0).matches(what_day)){
@@ -360,6 +389,9 @@ public class MainActivity extends AppCompatActivity {
 			reportDate = df.format(currentTime);
 
 			text_assistant.add(splitDateTime(reportDate, true));
+		}
+		else{
+			elses++;
 		}
 
 		/*
@@ -372,6 +404,9 @@ public class MainActivity extends AppCompatActivity {
 		if(open_app_matcher.find()){
 			text_assistant.add(openApp(open_app_matcher.group(1)));
 		}
+		else{
+			elses++;
+		}
 
 		/*
 		* E-mail
@@ -382,8 +417,44 @@ public class MainActivity extends AppCompatActivity {
 			text_assistant.add("¿A quién se lo quieres enviar?");
 			email_to_who = true;
 		}
+		else{
+			elses++;
+		}
 
+		email_to_matcher = email_to_pattern.matcher(text.get(0));
 
+		if(email_to_matcher.find() && email_to_who){
+			// email = user + @ + provider + domain
+			email_address = email_to_matcher.group(1).toLowerCase() + "@" + email_to_matcher.group(2).toLowerCase() + email_to_matcher.group(3).toLowerCase();
+
+			text_assistant.add("¿Cuál es el asunto?");
+
+			email_to_who = false;
+			email_about_what = true;
+		}
+
+		email_subject_matcher = email_subject_pattern.matcher(text.get(0));
+
+		if(email_subject_matcher.find() && email_about_what){
+			email_subject = email_subject_matcher.group(1);
+
+			text_assistant.add("¿Qué quieres decir en el correo?");
+
+			email_about_what = false;
+			email_saying_what = true;
+		}
+
+		email_content_matcher = email_content_pattern.matcher(text.get(0));
+
+		if(email_content_matcher.find() && email_saying_what){
+			email_content = email_content_matcher.group(1);
+
+			text_assistant.add("Correo para " + email_to + "enviado");
+
+			email_saying_what = false;
+
+			sendEmail(email_address, email_subject, email_content);
+		}
 
 		/*
 		* Default answer
