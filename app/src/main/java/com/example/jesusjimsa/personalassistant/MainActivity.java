@@ -52,13 +52,6 @@ public class MainActivity extends AppCompatActivity {
 	Date currentTime;
 	String reportDate;
 
-	/*
-	 * Each time a regex is not matched elses increases by 1.
-	 * When the method gets to the end, checks the value of elses with the number of
-	 * if expressions that have been ignored, if it's the maximum number, the default
-	 * message is sent to the user.
-	 * */
-	public int elses = 0;
 	public static final String DEFAULT_MESSAGE = "Lo siento, no te he entendido";
 
 	// Regular expressions
@@ -459,6 +452,12 @@ public class MainActivity extends AppCompatActivity {
 		* */
 		open_web_matcher = open_web_pattern.matcher(text.get(0));
 
+		if(open_web_matcher.find()){
+			launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www." + open_app_matcher.group(1) + open_web_matcher.group(2)));
+			startActivity(launchIntent);
+
+			text_for_assistant = "Eso está hecho";
+		}
 
 		text_assistant.add(text_for_assistant);
 		text_user.add("");

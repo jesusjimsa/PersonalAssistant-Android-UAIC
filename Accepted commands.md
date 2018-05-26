@@ -9,6 +9,7 @@ For testing reasons, all instructions are in Spanish.
 5. [Date and time](#date-and-time)
 6. [Email](#e-mail)
 7. [Weather](#weather)
+8. [Internet](#internet)
 
 ## Chat
 * Hola .*
@@ -48,6 +49,11 @@ For testing reasons, all instructions are in Spanish.
 * ¿Está lloviendo?
 * ¿Está nevando?
 * ¿Necesito el paraguas?
+
+## Internet
+* Abre _google.com_
+* Abre _github.com_
+* Abre ...
 
 # Allowed apps
 * Facebook
