@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
 		ListView sent_to_assistant = findViewById(R.id.sent_to_assistant);
 		ListView assistant_response = findViewById(R.id.assitant_response);
 
-		// Adapter: You need three parameters 'the context, id of the layout (it will be where the data is shown),
-		// and the array that contains the data
+		// Adapters to display responses in the lists of the interface
 		adapter_user = new ArrayAdapter<>(getApplicationContext(), R.layout.black_text_list, text_user);
 		adapter_assistant = new ArrayAdapter<>(getApplicationContext(), R.layout.black_text_list, text_assistant);
 
@@ -127,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				try {
 					startActivityForResult(recognizer_intent, REQ_CODE_SPEECH_INPUT);
-				} catch (ActivityNotFoundException a) {
+				}
+				catch (ActivityNotFoundException a) {
 					Toast.makeText(getApplicationContext(), "Opps! Your device doesn’t support Speech to Text", Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
 	protected String splitDateTime(String date_time, boolean return_date){
 		String[] splitted = date_time.split(" ");
-		String result = "";
+		String result;
 
 		if(return_date){
 			result = splitted[0];
@@ -419,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
 		* Saying hello
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(text.get(0).matches(hello)){
 			text_for_assistant = "Hola";
 		}
@@ -428,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
 		* Phone calls
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(text.get(0).matches(phone_call)){
 			text_for_assistant = "Dime el número al que quieres llamar";
 			asking_phone_number = true;
@@ -453,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
 		* Events
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(text.get(0).matches(event)){
 			text_for_assistant = "¿Qué día quieres hacerlo?";
 			creating_event_date = true;
@@ -462,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
 		event_date_matcher = event_date_pattern.matcher(text.get(0));
 
 		if(event_date_matcher.find() && creating_event_date) {
-			text_for_assistant = "De acuerdo, el" + event_date_matcher.group(2) + " de " + event_date_matcher.group(3) + ", ¿qué título le pongo?";
+			text_for_assistant = "De acuerdo, el " + event_date_matcher.group(2) + " de " + event_date_matcher.group(3) + ", ¿qué título le pongo?";
 
 			num_date = Integer.parseInt(event_date_matcher.group(2));
 			month_date = monthToNumber(event_date_matcher.group(3));
@@ -485,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
 		* Time and date
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		// Time
 		if(text.get(0).matches(what_time)){
 			currentTime = Calendar.getInstance().getTime();
@@ -506,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
 		* Open apps
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		open_app_matcher = open_app_pattern.matcher(text.get(0));
 
 		if(open_app_matcher.find()){
@@ -517,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
 		* E-mail
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(text.get(0).matches(new_email)){
 			text_for_assistant = "¿A quién se lo quieres enviar?";
 
@@ -563,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
 		* Weather
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(text.get(0).matches(weather)){
 			launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?&q=what%27s%20the%20weather%20like"));
 			startActivity(launchIntent);
@@ -575,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
 		* Open web
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		open_web_matcher = open_web_pattern.matcher(text.get(0));
 
 		if(open_web_matcher.find()){
@@ -589,22 +591,22 @@ public class MainActivity extends AppCompatActivity {
 		* Maps
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		route_matcher = route_pattern.matcher(text.get(0));
 
 		if(route_matcher.find()){
 			text_for_assistant = "A la orden";
 
 			if(route_matcher.group(1) != null){
-				launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(1)));
+				launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de aquí a " + route_matcher.group(1)));
 			}
 			else{
 				if(route_matcher.group(2) != null){
-					launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(2)));
+					launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de aquí a " + route_matcher.group(2)));
 				}
 				else{
 					if(route_matcher.group(3) != null){
-						launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(3)));
+						launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de aquí a " + route_matcher.group(3)));
 					}
 				}
 			}
@@ -638,15 +640,15 @@ public class MainActivity extends AppCompatActivity {
 		* Display results
 		*
 		*
-		* */
+		* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		text_assistant.add(text_for_assistant);
 		text_user.add("");
 
-		if(text_user.size() > 9){
+		if(text_user.size() > 8){
 			text_user.remove(0);
 		}
 
-		if(text_assistant.size() > 9){
+		if(text_assistant.size() > 8){
 			text_assistant.remove(0);
 		}
 
