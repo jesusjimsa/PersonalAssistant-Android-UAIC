@@ -10,6 +10,7 @@ For testing reasons, all instructions are in Spanish.
 6. [Email](#e-mail)
 7. [Weather](#weather)
 8. [Internet](#internet)
+9. [Maps](#maps)
 
 ## Chat
 * Hola .*
@@ -54,6 +55,15 @@ For testing reasons, all instructions are in Spanish.
 * Abre _google.com_
 * Abre _github.com_
 * Abre ...
+
+## Maps
+* Llévame a _Granada_
+* Muéstrame la ruta a _Madrid_
+* ¿Cómo se va a _Budapest_?  
+
+* Llévame de _París_ a _Lyon_
+* Muéstrame la ruta de _Berlín_ a _Hamburgo_
+* ¿Cómo se va de _Viena_ a _Varsovia_?
 
 # Allowed apps
 * Facebook

@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 	public String email_subject_re = "el asunto es (.*)";
 	public String email_content_re = "el contenido es (.*)";
 	public String weather = "qué tiempo hace(.*)|hace sol(.*)|está lloviendo(.*)|está nevando(.*)|necesito el paraguas(.*)";
+	public String route = "llévame a (.*)|muéstrame la ruta a (.*)|cómo se va a (.*)";
+	public String route_from = "llévame de (.*) a (.*)|muéstrame la ruta de (.*) a (.*)|cómo se va de (.*) a (.*)";
 
 	// Patterns and matchers
 	//// Phone calls
@@ -95,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
 	//// Webs
 	public Pattern open_web_pattern = Pattern.compile(open_web);
 	public Matcher open_web_matcher;
+	//// Maps
+	public Pattern route_pattern = Pattern.compile(route);
+	public Matcher route_matcher;
+	public Pattern route_from_pattern = Pattern.compile(route_from);
+	public Matcher route_from_matcher;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -578,6 +585,60 @@ public class MainActivity extends AppCompatActivity {
 			text_for_assistant = "Eso está hecho";
 		}
 
+		/*
+		* Maps
+		*
+		*
+		* */
+		route_matcher = route_pattern.matcher(text.get(0));
+
+		if(route_matcher.find()){
+			text_for_assistant = "A la orden";
+
+			if(route_matcher.group(1) != null){
+				launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(1)));
+			}
+			else{
+				if(route_matcher.group(2) != null){
+					launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(2)));
+				}
+				else{
+					if(route_matcher.group(3) != null){
+						launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta a " + route_matcher.group(3)));
+					}
+				}
+			}
+
+			startActivity(launchIntent);
+		}
+
+		route_from_matcher = route_from_pattern.matcher(text.get(0));
+
+		if(route_from_matcher.find()){
+			text_for_assistant = "A la orden";
+
+			if(route_from_matcher.group(1) != null){
+				launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de " + route_from_matcher.group(1) + " a " + route_from_matcher.group(2)));
+			}
+			else{
+				if(route_from_matcher.group(3) != null){
+					launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de " + route_from_matcher.group(3) + " a " + route_from_matcher.group(4)));
+				}
+				else{
+					if(route_from_matcher.group(5) != null){
+						launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.es/maps?&q=ruta de " + route_from_matcher.group(5) + " a " + route_from_matcher.group(6)));
+					}
+				}
+			}
+
+			startActivity(launchIntent);
+		}
+
+		/*
+		* Display results
+		*
+		*
+		* */
 		text_assistant.add(text_for_assistant);
 		text_user.add("");
 
